@@ -16,7 +16,9 @@ var brokenboatAnimation=[]
 var brokenboatSpriteData, brokenboatSpriteSheet
 var ballAnimation=[]
 var ballSpriteData, ballSpriteSheet
-
+var waterSound, pirateSound, bgSound, explosionSound
+var isGameOver=false
+var isLaughing=false
 
 function preload() {
   backgroundImg = loadImage("./assets/background.gif");
@@ -27,6 +29,10 @@ function preload() {
   brokenboatSpriteSheet=loadImage("./assets/boat/broken_boat.png")
   ballSpriteData=loadJSON("./assets/water_splash/water_splash.json")
   ballSpriteSheet=loadImage("./assets/water_splash/water_splash.png")
+  waterSound=loadSound("./assets/cannon_water.mp3")
+  pirateSound=loadSound("./assets/pirate_laugh.mp3")
+  bgSound=loadSound("./assets/background_music.mp3")
+  explosionSound=loadSound("./assets/cannon_explosion.mp3")
 }
 
 function setup() {
@@ -130,6 +136,13 @@ function showBoats(){
         Matter.Body.setVelocity(boats[i].body,{x:-0.9,y:0})
         boats[i].display();
         boats[i].animate()
+        var collision=Matter.SAT.collides(this.tower,boats[i].body)
+        if (collision.collided&& !boats[i].isBroken) {
+          pirateSound.play()
+          isLaughing=true
+        }
+        isGameOver=true
+        GameOver()
       }
       
     }
@@ -152,4 +165,19 @@ if (balls[index]!==undefined &&boats[i]!==undefined) {
 }
     
   }
+}
+
+function GameOver(){
+  swal({
+    title:"fim de jogo",
+    text:"obrigado por jogar",
+    imageUrl:"https://raw.githubusercontent.com/whitehatjr/PiratesInvasion/main/assets/boat.png",
+    imageSize:"150x150",
+    confirmButtonText:"jogar novamente?"
+  },
+  function(isConfirm){
+    if (isConfirm) {
+      location.reload()
+    }
+  })
 }
